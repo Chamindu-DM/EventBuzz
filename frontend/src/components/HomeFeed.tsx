@@ -6,6 +6,38 @@ import { ScrollArea } from './ui/scroll-area';
 import { Button } from './ui/button';
 import { RefreshCw } from 'lucide-react';
 
+// Define interfaces for our data structure
+interface Comment {
+  id: string;
+  author: string;
+  avatar: string;
+  content: string;
+  timestamp: Date;
+}
+
+interface PollOption {
+  id: number;
+  text: string;
+  votes: number;
+}
+
+interface PostData {
+  id: string;
+  author: string;
+  avatar: string;
+  timestamp: Date;
+  content: string;
+  type: 'text' | 'image' | 'poll';
+  imageUrl?: string;
+  pollQuestion?: string;
+  pollOptions?: PollOption[];
+  totalVotes?: number;
+  likes: number;
+  comments: Comment[];
+  userLiked?: boolean;
+  userVoted?: number;
+}
+
 // Mock initial posts data
 const initialPosts = [
   {
@@ -74,7 +106,7 @@ interface HomeFeedProps {
 }
 
 export function HomeFeed({ onNewNotification }: HomeFeedProps) {
-  const [posts, setPosts] = useState(initialPosts);
+  const [posts, setPosts] = useState<PostData[]>(initialPosts);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Simulate real-time updates
@@ -105,7 +137,7 @@ export function HomeFeed({ onNewNotification }: HomeFeedProps) {
     return () => clearInterval(interval);
   }, [onNewNotification]);
 
-  const handleNewPost = (newPost: any) => {
+  const handleNewPost = (newPost: PostData) => {
     setPosts([newPost, ...posts]);
   };
 
@@ -122,7 +154,7 @@ export function HomeFeed({ onNewNotification }: HomeFeedProps) {
   };
 
   const handleComment = (postId: string, commentText: string) => {
-    const newComment = {
+    const newComment: Comment = {
       id: Date.now().toString(),
       author: 'Current User',
       avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
@@ -130,7 +162,7 @@ export function HomeFeed({ onNewNotification }: HomeFeedProps) {
       timestamp: new Date()
     };
 
-    setPosts(posts.map(post => 
+    setPosts(prevPosts => prevPosts.map(post => 
       post.id === postId 
         ? { ...post, comments: [...post.comments, newComment] }
         : post
