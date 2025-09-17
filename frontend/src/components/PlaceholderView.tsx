@@ -6,6 +6,7 @@ interface PlaceholderViewProps {
   view: string;
 }
 
+
 export function PlaceholderView({ view }: PlaceholderViewProps) {
   const getViewConfig = (viewType: string) => {
     switch (viewType) {

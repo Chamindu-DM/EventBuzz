@@ -5,6 +5,7 @@ import { PlaceholderView } from './components/PlaceholderView';
 import { AuthProvider, useAuth } from './components/auth/AuthContext';
 import { AuthWrapper } from './components/auth/AuthWrapper';
 import { Toaster } from './components/ui/sonner';
+import TeamsView from './components/TeamsView';
 
 function AppContent() {
   const { isAuthenticated, isLoading, createUser } = useAuth();
@@ -37,18 +38,22 @@ function AppContent() {
   }
 
   // Main application for authenticated users
-  const renderView = () => {
-    switch (currentView) {
-      case 'home':
-        return <HomeFeed onNewNotification={handleNewNotification} />;
-      case 'events':
-      case 'teams':
-      case 'trending':
-        return <PlaceholderView view={currentView} />;
-      default:
-        return <HomeFeed onNewNotification={handleNewNotification} />;
-    }
-  };
+
+
+const renderView = () => {
+  switch (currentView) {
+    case 'home':
+      return <HomeFeed onNewNotification={handleNewNotification} />;
+    case 'events':
+    case 'trending':
+      return <PlaceholderView view={currentView} />;
+    case 'teams':
+      return <TeamsView />;  // <-- use the real Teams page here
+    default:
+      return <HomeFeed onNewNotification={handleNewNotification} />;
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-primary/5">
