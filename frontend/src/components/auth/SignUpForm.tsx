@@ -10,9 +10,10 @@ import { toast } from 'sonner';
 
 interface SignUpFormProps {
   onComplete: (data: any) => void;
+  onSwitchToSignIn?: () => void;
 }
 
-export function SignUpForm({ onComplete }: SignUpFormProps) {
+export function SignUpForm({ onComplete, onSwitchToSignIn }: SignUpFormProps) {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -302,9 +303,15 @@ export function SignUpForm({ onComplete }: SignUpFormProps) {
         <div className="mt-6 text-center">
           <p className="text-sm text-muted-foreground">
             Already have an account?{' '}
-            <button className="text-primary hover:underline">
+            <Button 
+              type="button"
+              variant="link"
+              className="p-0 h-auto font-normal"
+              onClick={onSwitchToSignIn}
+              disabled={isLoading}
+            >
               Sign in
-            </button>
+            </Button>
           </p>
         </div>
       </CardContent>
