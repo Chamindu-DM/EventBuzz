@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { SignUpForm } from './SignUpForm';
+import { SignInForm } from './SignInForm';
 import { ProfileSetup } from './ProfileSetup';
 import { WelcomeScreen } from './WelcomeScreen';
 
-export type AuthStep = 'signup' | 'profile' | 'welcome' | 'complete';
+export type AuthStep = 'signin' | 'signup' | 'profile' | 'welcome' | 'complete';
 
 // Base user data properties
 interface UserData {
@@ -30,8 +31,22 @@ interface AuthWrapperProps {
 }
 
 export function AuthWrapper({ onAuthComplete }: AuthWrapperProps) {
-  const [currentStep, setCurrentStep] = useState<AuthStep>('signup');
+  const [currentStep, setCurrentStep] = useState<AuthStep>('signin');
   const [userData, setUserData] = useState<UserData>({});
+
+  const handleSignInComplete = () => {
+    // In SignInForm we're directly using AuthContext's login function
+    // which will update the authentication state
+    setCurrentStep('complete');
+  };
+
+  const handleSwitchToSignUp = () => {
+    setCurrentStep('signup');
+  };
+
+  const handleSwitchToSignIn = () => {
+    setCurrentStep('signin');
+  };
 
   const handleSignUpComplete = (signupData: SignupData) => {
     setUserData(prev => ({ ...prev, ...signupData }));
@@ -52,8 +67,16 @@ export function AuthWrapper({ onAuthComplete }: AuthWrapperProps) {
 
   const renderStep = () => {
     switch (currentStep) {
+      case 'signin':
+        return <SignInForm 
+                 onComplete={handleSignInComplete} 
+                 onSwitchToSignUp={handleSwitchToSignUp} 
+               />;
       case 'signup':
-        return <SignUpForm onComplete={handleSignUpComplete} />;
+        return <SignUpForm 
+                 onComplete={handleSignUpComplete}
+                 onSwitchToSignIn={handleSwitchToSignIn} 
+               />;
       case 'profile':
         return <ProfileSetup onComplete={handleProfileComplete} userData={userData} />;
       case 'welcome':
