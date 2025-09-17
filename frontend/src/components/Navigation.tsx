@@ -5,6 +5,7 @@ import { Badge } from './ui/badge';
 import { Card, CardContent, CardHeader } from './ui/card';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { ScrollArea } from './ui/scroll-area';
+import logo from '../assets/Eventbuzz_logo.png';
 import { Separator } from './ui/separator';
 import { 
   Bell, 
@@ -99,10 +100,9 @@ export function Navigation({ currentView, onViewChange, unreadNotifications }: N
           {/* Logo/Brand */}
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold">E</span>
-              </div>
-              <span className="text-xl font-bold">EventWall</span>
+              <img src={logo} alt="Application Logo" 
+              className="w-full max-h-12 object-cover rounded-lg"
+              />
             </div>
 
             {/* Navigation Items */}

@@ -1,6 +1,7 @@
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Calendar, Users, TrendingUp, Plus } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 interface PlaceholderViewProps {
   view: string;
@@ -8,44 +9,46 @@ interface PlaceholderViewProps {
 
 export function PlaceholderView({ view }: PlaceholderViewProps) {
   const getViewConfig = (viewType: string) => {
-    switch (viewType) {
-      case 'events':
-        return {
-          icon: Calendar,
-          title: 'Events',
-          description: 'Discover and join upcoming hackathons, workshops, and networking sessions.',
-          action: 'Browse Events',
-          comingSoon: true
-        };
-      case 'teams':
-        return {
-          icon: Users,
-          title: 'Teams',
-          description: 'Find teammates for your projects or join existing teams looking for your skills.',
-          action: 'Find Teams',
-          comingSoon: true
-        };
-      case 'trending':
-        return {
-          icon: TrendingUp,
-          title: 'Trending',
-          description: 'See what\'s popular right now - trending posts, hot topics, and viral content.',
-          action: 'Explore Trending',
-          comingSoon: true
-        };
-      default:
-        return {
-          icon: Calendar,
-          title: 'Coming Soon',
-          description: 'This feature is under development.',
-          action: 'Stay Tuned',
-          comingSoon: true
-        };
-    }
+    const configs: Record<string, { icon: LucideIcon; title: string; description: string; action: string; comingSoon: boolean }> = {
+      events: {
+        icon: Calendar,
+        title: 'Events',
+        description: 'Discover and join upcoming hackathons, workshops, and networking sessions.',
+        action: 'Browse Events',
+        comingSoon: true,
+      },
+      teams: {
+        icon: Users,
+        title: 'Teams',
+        description: 'Find teammates for your projects or join existing teams looking for your skills.',
+        action: 'Find Teams',
+        comingSoon: true,
+      },
+      trending: {
+        icon: TrendingUp,
+        title: 'Trending',
+        description: "See what's popular right now - trending posts, hot topics, and viral content.",
+        action: 'Explore Trending',
+        comingSoon: true,
+      },
+    };
+
+    return configs[viewType] || {
+      icon: Calendar,
+      title: 'Coming Soon',
+      description: 'This feature is under development.',
+      action: 'Stay Tuned',
+      comingSoon: true,
+    };
   };
 
   const config = getViewConfig(view);
   const Icon = config.icon;
+
+  const handleCreateEventClick = () => {
+    // TODO: Implement modal opening logic
+    console.log('Create Event button clicked');
+  };
 
   return (
     <div className="max-w-2xl mx-auto p-4">
@@ -56,29 +59,21 @@ export function PlaceholderView({ view }: PlaceholderViewProps) {
               <Icon className="w-8 h-8 text-primary" />
             </div>
             
-            <div className="space-y-2">
-              <h2 className="text-2xl font-bold">{config.title}</h2>
+            <div className="space-y-2 flex flex-col items-center">
+              <div className="flex items-center gap-4">
+                <h2 className="text-2xl font-bold">{config.title}</h2>
+                {view === 'events'}
+              </div>
+              <Button size="sm" onClick={handleCreateEventClick}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create Event
+                  </Button>
               <p className="text-muted-foreground max-w-md mx-auto">
                 {config.description}
               </p>
             </div>
 
-            {config.comingSoon ? (
-              <div className="space-y-4">
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
-                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                  Coming Soon
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  We're working hard to bring you this feature. Stay tuned for updates!
-                </p>
-              </div>
-            ) : (
-              <Button className="flex items-center gap-2">
-                <Plus className="w-4 h-4" />
-                {config.action}
-              </Button>
-            )}
+           
 
             <div className="pt-4 border-t">
               <p className="text-xs text-muted-foreground">
