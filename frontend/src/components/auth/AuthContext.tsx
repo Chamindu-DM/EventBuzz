@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
 
 interface User {
   id: string;
@@ -19,6 +20,23 @@ interface User {
   createdAt: Date;
 }
 
+interface CreateUserData {
+  email: string;
+  firstName: string;
+  lastName: string;
+  university: string;
+  studentId?: string;
+  bio?: string;
+  year?: string;
+  major?: string;
+  skills?: string[];
+  interests?: string;
+  githubUsername?: string;
+  linkedinUrl?: string;
+  portfolioUrl?: string;
+  profileImage?: string;
+}
+
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
@@ -26,7 +44,7 @@ interface AuthContextType {
   login: (credentials: { email: string; password: string }) => Promise<void>;
   logout: () => void;
   updateUser: (userData: Partial<User>) => void;
-  createUser: (userData: any) => void;
+  createUser: (userData: CreateUserData) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -55,6 +73,9 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+// In-memory storage to replace localStorage
+let savedUserData: User | null = null;
+
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -70,10 +91,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         //   setUser(userData);
         // }
         
-        // For demo, check localStorage for saved user
-        const savedUser = localStorage.getItem('eventwall_user');
-        if (savedUser) {
-          setUser(JSON.parse(savedUser));
+        // For demo, check in-memory storage for saved user
+        if (savedUserData) {
+          setUser(savedUserData);
         }
       } catch (error) {
         console.error('Failed to check auth status:', error);
@@ -103,7 +123,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // For demo, use mock user if credentials match
       if (credentials.email === mockUser.email) {
         setUser(mockUser);
-        localStorage.setItem('eventwall_user', JSON.stringify(mockUser));
+        savedUserData = mockUser;
       } else {
         throw new Error('Invalid credentials');
       }
@@ -118,14 +138,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // await fetch('/api/auth/logout', { method: 'POST' });
     
     setUser(null);
-    localStorage.removeItem('eventwall_user');
+    savedUserData = null;
   };
 
   const updateUser = (userData: Partial<User>) => {
     if (user) {
       const updatedUser = { ...user, ...userData };
       setUser(updatedUser);
-      localStorage.setItem('eventwall_user', JSON.stringify(updatedUser));
+      savedUserData = updatedUser;
       
       // TODO: Add API call to update user data
       // await fetch('/api/users/me', {
@@ -136,7 +156,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  const createUser = (userData: any) => {
+  const createUser = (userData: CreateUserData) => {
     const newUser: User = {
       id: Date.now().toString(), // In real app, this would come from backend
       ...userData,
@@ -144,7 +164,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     };
     
     setUser(newUser);
-    localStorage.setItem('eventwall_user', JSON.stringify(newUser));
+    savedUserData = newUser;
     
     // TODO: Add API call to create user account
     // const response = await fetch('/api/auth/register', {

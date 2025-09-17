@@ -5,54 +5,41 @@ import { WelcomeScreen } from './WelcomeScreen';
 
 export type AuthStep = 'signup' | 'profile' | 'welcome' | 'complete';
 
+// Base user data properties
+interface UserData {
+  email?: string;
+  password?: string;
+  name?: string;
+  profilePicture?: string;
+  interests?: string[];
+  // Add other possible properties as needed
+}
+
+interface SignupData extends Partial<UserData> {
+  email: string;
+  password: string;
+}
+
+interface ProfileData extends Partial<UserData> {
+  name: string;
+  // Other required profile fields
+}
+
 interface AuthWrapperProps {
-  onAuthComplete: (userData: any) => void;
+  onAuthComplete: (userData: UserData) => void;
 }
 
 export function AuthWrapper({ onAuthComplete }: AuthWrapperProps) {
   const [currentStep, setCurrentStep] = useState<AuthStep>('signup');
-  const [userData, setUserData] = useState<any>({});
+  const [userData, setUserData] = useState<UserData>({});
 
-  const handleSignUpComplete = (signupData: any) => {
+  const handleSignUpComplete = (signupData: SignupData) => {
     setUserData(prev => ({ ...prev, ...signupData }));
     setCurrentStep('profile');
   };
 
-  const handleProfileComplete = (profileData: any) => {
-    interface UserData {
-        // Base user data properties
-        email?: string;
-        password?: string;
-        // Profile data properties
-        name?: string;
-        profilePicture?: string;
-        interests?: string[];
-        // Add other possible properties as needed
-    }
-
-    interface SignupData extends Partial<UserData> {
-        email: string;
-        password: string;
-    }
-
-    interface ProfileData extends Partial<UserData> {
-        name: string;
-        // Other required profile fields
-    }
-
-    export function AuthWrapper({ onAuthComplete }: AuthWrapperProps) {
-        const [currentStep, setCurrentStep] = useState<AuthStep>('signup');
-        const [userData, setUserData] = useState<UserData>({});
-
-        const handleSignUpComplete = (signupData: SignupData) => {
-            setUserData(prev => ({ ...prev, ...signupData }));
-            setCurrentStep('profile');
-        };
-
-        const handleProfileComplete = (profileData: ProfileData) => {
-            setUserData(prev => ({ ...prev, ...profileData }));
-            setCurrentStep('welcome');
-        };
+  const handleProfileComplete = (profileData: ProfileData) => {
+    setUserData(prev => ({ ...prev, ...profileData }));
     setCurrentStep('welcome');
   };
 
